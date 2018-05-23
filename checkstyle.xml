@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="Check\:OFF\: ([\w\|]+)"/>
+        <property name="onCommentFormat" value="Check\:ON\: ([\w\|]+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
+
+    <!--
+        Checks for whitespace
+        http://checkstyle.sourceforge.net/config_whitespace.html
+    -->
+    <module name="FileTabCharacter"/>
+
+    <!--
+        Checks for sizes
+        http://checkstyle.sourceforge.net/config_sizes.html
+    -->
+    <module name="FileLength"/>
+
+    <module name="TreeWalker">
+
+        <module name="FileContentsHolder"/>
+
+        <!--
+            Checks for imports
+            http://checkstyle.sourceforge.net/config_imports.html
+        -->
+        <module name="IllegalImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+
+        <!--
+            Checks for common coding problems
+            http://checkstyle.sourceforge.net/config_coding.html
+        -->
+        <!--<module name="AvoidInlineConditionals"/>-->
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="IllegalInstantiation"/>
+        <module name="InnerAssignment"/>
+        <module name="MagicNumber"/>
+        <!--<module name="MissingSwitchDefault"/>-->
+        <!--<module name="RedundantThrows"/>-->
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+
+        <!--
+            Checks for blocks
+            http://checkstyle.sourceforge.net/config_blocks.html
+
+            LeftCurly and RightCurly perform the following check in sonar:
+            Close curly brace and the next "else", "catch" and "finally" keywords should be located on the same line
+        -->
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
+
+        <!--
+        TODO: the sonar equivalent is "Control structures should use curly braces"
+        <module name="NeedBraces">
+            <property name="tokens" value="LITERAL_IF, LITERAL_ELSE"/>
+        </module>
+        -->
+
+    </module>
+
+
+</module>

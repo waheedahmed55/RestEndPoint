@@ -1,0 +1,7 @@
+${AnsiColor.GREEN}  _                                     _                   _             _           _ _
+${AnsiColor.GREEN} | | ___  __ _ _ __ _ ____   _____  ___| |_    ___ ___   __| | ___    ___| |__   __ _| | | ___ _ __   __ _  ___
+${AnsiColor.GREEN} | |/ _ \/ _` | '__| '_ \ \ / / _ \/ __| __|  / __/ _ \ / _` |/ _ \  / __| '_ \ / _` | | |/ _ \ '_ \ / _` |/ _ \
+${AnsiColor.GREEN} | |  __/ (_| | |  | | | \ V /  __/\__ \ |_  | (_| (_) | (_| |  __/ | (__| | | | (_| | | |  __/ | | | (_| |  __/
+${AnsiColor.GREEN} |_|\___|\__,_|_|  |_| |_|\_/ \___||___/\__|  \___\___/ \__,_|\___|  \___|_| |_|\__,_|_|_|\___|_| |_|\__, |\___|
+${AnsiColor.GREEN}                                                                                                     |___/
+${AnsiColor.GREEN}:: learnvest-code-challenge - service - running spring boot ${spring-boot.version} ::${AnsiColor.DEFAULT}
