@@ -19,6 +19,7 @@ public class CardDaoRowMapper extends BaseRowMapper<Card> {
         map.put("card_image", card.getCardImage());
         map.put("card_image_mime_type", card.getCardImageMimeType());
         map.put("card_type", card.getCardType());
+        map.put("card_description", card.getCardDescription());
         return map;
     }
 
@@ -31,6 +32,7 @@ public class CardDaoRowMapper extends BaseRowMapper<Card> {
         card.setCardImage(resultSet.getBytes("card_image"));
         card.setCardImageMimeType(resultSet.getString("card_image_mime_type"));
         card.setCardType(resultSet.getString("card_type"));
+        card.setCardDescription(resultSet.getString("card_description"));
         return card;
     }
 

@@ -5,7 +5,6 @@ import java.util.Random;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +111,6 @@ public class CardDaoUnitTest {
     /**
      * Verify that {@link CardDao#update} is working correctly.
      */
-    @Ignore
     @Test
     public void update() {
         Card createCard = TestUtils.cardWithTestValues();
@@ -137,6 +135,38 @@ public class CardDaoUnitTest {
         assertTrue(Arrays.equals(updateCard.getCardImage(), verifyUpdateCard.getCardImage()));
         assertEquals(updateCard.getCardImageMimeType(), verifyUpdateCard.getCardImageMimeType());
         assertEquals(updateCard.getCardType(), verifyUpdateCard.getCardType());
+    }
+    
+    /**
+     * Verify that {@link CardDao#update} is working correctly.
+     */
+    @Test
+    public void updateWithDescription() {
+        Card createCard = TestUtils.cardWithTestValues();
+        createCard.setCardDescription("old description");
+        Long id = cardDao.create(createCard);
+        assertNotNull(id);
+        assertNotNull(createCard.getId());
+
+        Card verifyCreateCard = cardDao.read(createCard.getId());
+        assertNotNull(verifyCreateCard);
+        assertEquals(createCard.getId(), verifyCreateCard.getId());
+        assertEquals(createCard.getCardDescription(), verifyCreateCard.getCardDescription());
+
+        Card updateCard = TestUtils.cardWithTestValues();
+        updateCard.setId(createCard.getId());
+        updateCard.setCardDescription("new description");
+        cardDao.update(updateCard);
+
+        Card verifyUpdateCard = cardDao.read(updateCard.getId());
+        assertNotNull(verifyUpdateCard);
+        assertEquals(createCard.getId(), verifyUpdateCard.getId());
+        assertEquals(updateCard.getCardName(), verifyUpdateCard.getCardName());
+        assertEquals(updateCard.getCardNumber(), verifyUpdateCard.getCardNumber());
+        assertTrue(Arrays.equals(updateCard.getCardImage(), verifyUpdateCard.getCardImage()));
+        assertEquals(updateCard.getCardImageMimeType(), verifyUpdateCard.getCardImageMimeType());
+        assertEquals(updateCard.getCardType(), verifyUpdateCard.getCardType());
+        assertEquals(updateCard.getCardDescription(),verifyUpdateCard.getCardDescription());
     }
 
     /**

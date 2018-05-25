@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +125,42 @@ public class CardRestControllerComponentTest {
         assertNotNull(cardResponse);
         assertNotNull(cardResponse.getId());
         assertEquals(createCard, cardResponse);
+
+        // use the DAO to verify that the card was created
+        Card verifyCreateCard = cardDao.read(cardResponse.getId());
+        assertEquals(cardResponse, verifyCreateCard);
+    }
+    
+    /**
+     * The following test verifies that {@link CardRestController#create} endpoint is working correctly.
+     * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
+     */
+    @Test
+    public void createCardWithDescription() throws Exception {
+        // generate a card object with random bits of data for use within our test
+        Card createCard = TestUtils.cardWithTestValues();
+        createCard.setCardDescription("some description");
+
+        // ensure that the CardRestController create endpoint is working correctly by sending it proper JSON
+        RequestSpecBuilder builder = new RequestSpecBuilder();
+        builder.setBody(mapper.writeValueAsString(createCard));
+        builder.setContentType("application/json; charset=UTF-8");
+        RequestSpecification requestSpecification = builder.build();
+
+        ExtractableResponse<Response> createResponse = given()
+                .when()
+                .spec(requestSpecification)
+                .post(RequestMappingConstants.Service.CARD)
+                .then()
+                .statusCode(HttpServletResponse.SC_CREATED).extract();
+
+        // map the endpoint response to a card object
+        Card cardResponse = mapper.readValue(createResponse.response().body().asString(), Card.class);
+
+        // verify that the endpoint performed as expected by comparing description of input and output values
+        assertNotNull(cardResponse);
+        assertNotNull(cardResponse.getId());
+        assertEquals(createCard.getCardDescription(), cardResponse.getCardDescription());
 
         // use the DAO to verify that the card was created
         Card verifyCreateCard = cardDao.read(cardResponse.getId());
@@ -259,6 +294,35 @@ public class CardRestControllerComponentTest {
         assertEquals(testCard.getId(), cardResponse.getId());
         assertEquals(testCard, cardResponse);
     }
+    
+    /**
+     * The following test verifies that the {@link CardRestController#read} endpoint is functioning correctly.
+     * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
+     */
+    @Test
+    public void readCardWithoutDescription() throws Exception {
+        // ensure that CardDao create is working correctly
+        Card testCard = TestUtils.cardWithTestValues();
+        Long id = cardDao.create(testCard);
+        assertNotNull(id);
+        assertEquals(id, testCard.getId());
+
+        // ensure that the CardRestController read endpoint is working correctly
+        ExtractableResponse<Response> readResponse = given()
+                .when()
+                .get(RequestMappingConstants.Service.CARD + "/" + testCard.getId())
+                .then()
+                .statusCode(HttpServletResponse.SC_OK).extract();
+
+        // map the endpoint response to a Card object
+        Card cardResponse = mapper.readValue(readResponse.response().body().asString(), Card.class);
+
+        // verify that the endpoint performed as expected by comparing input and output values in addition to cardDescription nullability
+        assertNotNull(cardResponse);
+        assertEquals(testCard.getId(), cardResponse.getId());
+        assertEquals(testCard, cardResponse);
+        assertNull(cardResponse.getCardDescription());
+    }
 
     /**
      * Verify that {@link CardRestController#read} endpoint correctly respond with {@link HttpServletResponse#SC_NOT_FOUND}
@@ -283,7 +347,6 @@ public class CardRestControllerComponentTest {
      * {@link CardRestController#update} endpoint is also functioning correctly.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void updateCard() throws Exception {
         // create a test card via the DAO
@@ -321,6 +384,52 @@ public class CardRestControllerComponentTest {
         assertNotNull(readCard);
         assertEquals(updateCard, readCard);
     }
+    
+    /**
+     * The following test verifies that {@link CardDao#update} is working correctly and that the
+     * {@link CardRestController#update} endpoint is also functioning correctly.
+     * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
+     */
+    @Test
+    public void updateCardDescripton() throws Exception {
+        // create a test card via the DAO
+        Card testCard = TestUtils.cardWithTestValues();
+        testCard.setCardDescription("old decription");
+        Long id = cardDao.create(testCard);
+        assertNotNull(id);
+        assertEquals(id, testCard.getId());
+
+        // ensure that the CardRestController update endpoint is working correctly by sending it proper JSON
+        Card updateCard = TestUtils.cardWithTestValues();
+        updateCard.setId(id);
+        updateCard.setCardDescription("new Description");
+
+        RequestSpecBuilder builder = new RequestSpecBuilder();
+        builder.setBody(mapper.writeValueAsString(updateCard));
+        builder.setContentType("application/json; charset=UTF-8");
+        RequestSpecification requestSpecification = builder.build();
+
+        ExtractableResponse<Response> updateResponse = given()
+                .when()
+                .spec(requestSpecification)
+                .put(RequestMappingConstants.Service.CARD)
+                .then()
+                .statusCode(HttpServletResponse.SC_OK).extract();
+
+        // map the endpoint response to a card object
+        Card cardResponse = mapper.readValue(updateResponse.response().body().asString(), Card.class);
+
+        // verify that the endpoint performed as expected by comparing desxcription of input and output values
+        assertNotNull(cardResponse);
+        assertEquals(updateCard.getId(), cardResponse.getId());
+        assertEquals(updateCard.getCardDescription(), cardResponse.getCardDescription());
+
+        // use the DAO to verify that the update performed via the endpoint above was successful
+        Card readCard = cardDao.read(id);
+        assertNotNull(readCard);
+        assertEquals(updateCard, readCard);
+    }
+    
     /**
      * Verify that {@link CardRestController#update} is working correctly when a request for a {@link Card} that
      * contains a value which exceeds the {@link CardDao#update} database configuration is made. The expectation
@@ -328,7 +437,6 @@ public class CardRestControllerComponentTest {
      * {@link ServiceErrorHandler} error handler.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void updateCardColumnTooLong() throws Exception {
         // create a test card via the DAO
@@ -372,7 +480,6 @@ public class CardRestControllerComponentTest {
      * {@link ErrorSummary} when a request to update a null object is made.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void updateCardNull() throws Exception {
         Card nullCard = null;
@@ -408,7 +515,6 @@ public class CardRestControllerComponentTest {
      * when a request to update a {@link Card} with a null {@link Card#id} value is made.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void updateCardNullId() throws Exception {
         // generate a test card value with an id already defined
@@ -434,7 +540,6 @@ public class CardRestControllerComponentTest {
      * functioning correctly.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void deleteCard() throws Exception {
         // ensure that CardDao create is working correctly
@@ -463,7 +568,6 @@ public class CardRestControllerComponentTest {
      * when a request for a non-existent {@link Card#id} is made.
      * @throws Exception within {@link com.fasterxml.jackson.databind.ObjectMapper}
      */
-    @Ignore
     @Test
     public void deleteCardNonExistent() throws Exception {
         // create a random card id that will not be in our local database

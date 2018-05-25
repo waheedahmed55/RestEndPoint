@@ -12,6 +12,7 @@ public class Card {
     private byte[] cardImage;
     private String cardImageMimeType;
     private String cardType;
+    private String cardDescription;
 
     public Long getId() {
         return id;
@@ -60,8 +61,18 @@ public class Card {
     public void setCardType(String cardType) {
         this.cardType = cardType;
     }
+    
+    
 
-    @Override
+    public String getCardDescription() {
+		return cardDescription;
+	}
+
+	public void setCardDescription(String cardDescription) {
+		this.cardDescription = cardDescription;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Card)) {
             return false;
@@ -78,6 +89,7 @@ public class Card {
                 .append(this.cardImage, otherObject.cardImage)
                 .append(this.cardImageMimeType, otherObject.cardImageMimeType)
                 .append(this.cardType, otherObject.cardType)
+                .append(this.cardDescription,otherObject.cardDescription)
                 .isEquals();
     }
 
@@ -90,6 +102,7 @@ public class Card {
                 .append(this.cardImage)
                 .append(this.cardImageMimeType)
                 .append(this.cardType)
+                .append(this.cardDescription)
                 .toHashCode();
     }
 

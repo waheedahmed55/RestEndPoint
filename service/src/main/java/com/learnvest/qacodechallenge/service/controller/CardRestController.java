@@ -82,6 +82,12 @@ public class CardRestController {
 
         // TODO: If the requested {@link Card} is not found
         // TODO: then return {@link HttpServletResponse} status of {@link HttpServletResponse#SC_NOT_FOUND}
+    	Card card = cardDao.read(cardId);
+    	if(card == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    	}else {
+    		cardDao.delete(cardId);
+    	}
 
     }
 
